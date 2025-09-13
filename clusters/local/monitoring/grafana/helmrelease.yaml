@@ -1,0 +1,31 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: grafana
+  namespace: monitoring
+spec:
+  chart:
+    spec:
+      chart: grafana
+      sourceRef:
+        kind: HelmRepository
+        name: grafana
+        namespace: flux-system
+  values:
+    adminUser: admin
+    adminPassword: adminpassword
+    ingress:
+      enabled: true
+      hosts:
+        - app-monitor.local
+      annotations:
+        kubernetes.io/ingress.class: nginx
+    datasources:
+      datasources.yaml:
+        apiVersion: 1
+        datasources:
+          - name: Loki
+            type: loki
+            url: http://loki:3100
+            access: proxy
+            isDefault: true
